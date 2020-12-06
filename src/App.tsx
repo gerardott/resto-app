@@ -1,12 +1,12 @@
 import React from 'react';
-import logo from './logo.svg';
 import './App.css';
+import { TablesLayout } from './components/TablesLayout';
 
 function App() {
   return (
     <div className="App">
       <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
+        <TablesLayout />
         <p>
           Edit <code>src/App.tsx</code> and save to reload.
         </p>
