@@ -4,6 +4,7 @@ import Layout, { Header, Content, Footer } from 'antd/lib/layout/layout';
 import './styles.css';
 import Tab1 from './Tab1';
 import LayoutEditorTab from './LayoutEditorTab';
+import UserDropdown from '../components/UserDropdown';
 
 interface Props {
 }
@@ -13,7 +14,10 @@ const Main: React.FC<Props> = () => {
   return (
     <Layout className="layout">
       <Header>
-        <div className="logo" />
+        <Row justify="space-between" align="middle" style={{ height: '100%' }}>
+          <div className="logo" />
+          <UserDropdown />
+        </Row>
       </Header>
       <Content style={{ padding: '0 50px' }}>
         <div className="site-layout-content" style={{ margin: '16px 0' }}>
