@@ -1,0 +1,28 @@
+.site-layout-content {
+  min-height: 380px;
+  padding: 12px;
+  /* background: #fff; */
+}
+.layout .logo {
+  float: left;
+  width: 120px;
+  height: 31px;
+  margin: 16px 24px 16px 0;
+  background: rgba(255, 255, 255, 0.3);
+}
+.ant-row-rtl .layout .logo {
+  float: right;
+  margin: 16px 0 16px 24px;
+}
+
+.ant-tabs-top.ant-tabs-card > .ant-tabs-nav{
+  margin-bottom: 0px;
+}
+.ant-tabs-content.ant-tabs-content-top .ant-card{
+  border-top: 0px;
+}
+.tab-content {
+  padding: 16px;
+  min-height: 200px;
+  background: #ffffff;
+}
