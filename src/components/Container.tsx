@@ -19,7 +19,11 @@ const initCards = Array(150).fill(null).map<Item>((_, i) => ({
   hasReservation: Math.random() > 0.5
 }))
 
-export const Container: React.FC = () => {
+interface Props {
+  onTableClick: (table: any) => void
+}
+
+export const Container: React.FC<Props> = ({onTableClick}) => {
   const [cards, setCards] = useState(initCards)
 
   const moveCard = useCallback((dragIndex: number, hoverIndex: number) => {
@@ -34,7 +38,7 @@ export const Container: React.FC = () => {
 
   const onCardClick = (idx: number) => {
     const card = cards[idx];
-    alert('click' + card.id);
+    onTableClick(card);
   }
 
   return (

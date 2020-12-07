@@ -3,10 +3,14 @@ import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
 import { Container } from './Container'
 
-export const TablesLayout: React.FC = () => {
+interface Props {
+  onTableClick: (table: any) => void
+}
+
+export const TablesLayout: React.FC<Props> = ({onTableClick}) => {
   return (
     <DndProvider backend={HTML5Backend}>
-      <Container />
+      <Container onTableClick={onTableClick} />
     </DndProvider>
   )
 }
