@@ -58,7 +58,7 @@ export const Card: React.FC<CardProps> = ({ id, text, index, draggable, hasReser
   const hndClick = () => onClick && onClick(index);
 
   const opacity = isDragging ? 0.1 : 1.0;
-  const backgroundColor = hasReservation ? 'red' : undefined;
+  const backgroundColor = hasReservation ? 'lightgreen' : undefined;
   if (draggable) {
     drag(drop(ref))
   }

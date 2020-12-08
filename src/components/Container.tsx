@@ -1,4 +1,5 @@
 import React, { useState, useCallback } from 'react'
+import { Table } from '../models/Table';
 import { Card } from './Card'
 
 // Item width by number of items in row
@@ -13,18 +14,31 @@ export interface Item {
 export interface ContainerState {
   cards: Item[]
 }
-const initCards = Array(150).fill(null).map<Item>((_, i) => ({
+const initCards = Array(150).fill(null).map((_, i) => ({
   id: i + 1,
-  text: `# ${i + 1}`,
-  hasReservation: Math.random() > 0.5
+  text: '-',
+  hasReservation: false
 }))
 
 interface Props {
+  tables: Table[]
   onTableClick: (table: any) => void
 }
 
-export const Container: React.FC<Props> = ({onTableClick}) => {
+export const Container: React.FC<Props> = ({tables, onTableClick}) => {
   const [cards, setCards] = useState(initCards)
+  
+  React.useEffect(() => {
+    const updated = cards.map((item, idx) => {
+      const table = tables.find(x => x.position === idx);
+      if (table) {
+        item.text = table?.seats + ' s';
+        item.hasReservation = true;
+      }
+      return item;
+    });
+    setCards(updated);
+  }, [tables])
 
   const moveCard = useCallback((dragIndex: number, hoverIndex: number) => {
     const dragCard = cards[dragIndex]
@@ -37,8 +51,8 @@ export const Container: React.FC<Props> = ({onTableClick}) => {
   }, [cards])
 
   const onCardClick = (idx: number) => {
-    const card = cards[idx];
-    onTableClick(card);
+    // const card = cards[idx];
+    onTableClick(idx);
   }
 
   return (

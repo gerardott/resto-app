@@ -1,21 +1,31 @@
 import { Button, Form, Input, Modal } from 'antd';
 import React, { useState } from 'react';
 import { TablesLayout } from '../components/TablesLayout';
+import { Table } from '../models/Table';
 
 interface Props {}
 const LayoutEditorTab: React.FC<Props> = (props) => {
   const [isOpen, setIsOpen] = useState(false);
+  const [tables, setTables] = useState<Table[]>([]);
   const [form] = Form.useForm();
 
-  const onTableClick = (table: any) => {
+  const onTableClick = (position: any) => {
     setIsOpen(true);
-    console.log(table);
-    form.setFieldsValue({seats: table.text});
+    const table = tables.find(x => x.position === position);
+    if (table) {
+      form.setFieldsValue(table);
+    }
+    else {
+      const draftTable = { id: tables.length + 1, position };
+      form.setFieldsValue(draftTable);
+    }
   }
   
   const onSave = (values: any) => {
     setIsOpen(false);
-    alert(JSON.stringify(values));
+    const newTable: Table = values;
+    setTables([...tables, newTable]);
+    form.resetFields();
   }
   
   const onCancel = () => {
@@ -26,7 +36,7 @@ const LayoutEditorTab: React.FC<Props> = (props) => {
     <div className="tab-content">
       <h1>Table Layout Editor</h1>
       <p>Click on a cell to edit seats.</p>
-      <TablesLayout onTableClick={onTableClick} />
+      <TablesLayout tables={tables} onTableClick={onTableClick} />
       <Modal
         title="Edit Table"
         visible={isOpen}
@@ -39,8 +49,14 @@ const LayoutEditorTab: React.FC<Props> = (props) => {
           size="middle"
           onFinish={onSave}
         >
-          <Form.Item label="Seats" name="seats">
+          <Form.Item label="Table #" name="id">
+            <Input disabled />
+          </Form.Item>
+          <Form.Item hidden name="position">
             <Input />
+          </Form.Item>
+          <Form.Item label="Seats" name="seats">
+            <Input type="number" />
           </Form.Item>
           <Button type="primary" htmlType="submit" >Save</Button>
         </Form>
