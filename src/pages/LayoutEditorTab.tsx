@@ -21,6 +21,16 @@ const LayoutEditorTab: React.FC<Props> = (props) => {
     }
   }
   
+  const switchTable = (dragIndex: number, hoverIndex: number) => {
+    const updated = tables.map(x => {
+      if (x.position === dragIndex) {
+        return {...x, position: hoverIndex};
+      }
+      return x;
+    });
+    setTables(updated);
+  }
+  
   const onSave = (values: any) => {
     setIsOpen(false);
     const newTable: Table = values;
@@ -36,7 +46,7 @@ const LayoutEditorTab: React.FC<Props> = (props) => {
     <div className="tab-content">
       <h1>Table Layout Editor</h1>
       <p>Click on a cell to edit seats.</p>
-      <TablesLayout tables={tables} onTableClick={onTableClick} />
+      <TablesLayout tables={tables} onTableClick={onTableClick} switchTable={switchTable} />
       <Modal
         title="Edit Table"
         visible={isOpen}

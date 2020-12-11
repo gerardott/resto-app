@@ -1,9 +1,9 @@
-import React, { useState, useCallback } from 'react'
+import React from 'react'
 import { Table } from '../models/Table';
 import { Card } from './Card'
 
 // Item width by number of items in row
-const width = 60 * 15;
+const width = 70 * 15;
 
 export interface Item {
   id: number
@@ -11,44 +11,26 @@ export interface Item {
   hasReservation: boolean
 }
 
-export interface ContainerState {
-  cards: Item[]
-}
-const initCards = Array(150).fill(null).map((_, i) => ({
-  id: i + 1,
-  text: '-',
-  hasReservation: false
-}))
-
 interface Props {
   tables: Table[]
   onTableClick: (table: any) => void
+  switchTable: (dragIndex: number, hoverIndex: number) => void
 }
 
-export const Container: React.FC<Props> = ({tables, onTableClick}) => {
-  const [cards, setCards] = useState(initCards)
-  
-  React.useEffect(() => {
-    const updated = cards.map((item, idx) => {
-      const table = tables.find(x => x.position === idx);
-      if (table) {
-        item.text = table?.seats + ' s';
-        item.hasReservation = true;
-      }
-      return item;
-    });
-    setCards(updated);
-  }, [tables])
-
-  const moveCard = useCallback((dragIndex: number, hoverIndex: number) => {
-    const dragCard = cards[dragIndex]
-    const hoverCard = cards[hoverIndex]
-
-    const cardsClone = [...cards];
-    cardsClone.splice(dragIndex, 1, hoverCard);
-    cardsClone.splice(hoverIndex, 1, dragCard);
-    setCards(cardsClone);
-  }, [cards])
+export const Container: React.FC<Props> = ({tables, onTableClick, switchTable}) => {
+  const cards = Array(150).fill(null).map((_, idx) => {
+    let item: any = { id: idx + 1 };
+    const table = tables.find(x => x.position === idx);
+    if (table) {
+      item.text = `${table.seats} seats`;
+      item.hasReservation = true;
+    }
+    else {
+      item.text = '-';
+      item.hasReservation = false;
+    }
+    return item;
+  });
 
   const onCardClick = (idx: number) => {
     // const card = cards[idx];
@@ -57,7 +39,7 @@ export const Container: React.FC<Props> = ({tables, onTableClick}) => {
 
   return (
     <div style={{ fontSize: 12 }}>
-      <div style={{ width: width, display: 'flex', flexDirection: 'row', flexWrap: 'wrap' }}>
+      <div style={{ width: width, display: 'flex', flexDirection: 'row', flexWrap: 'wrap', textAlign: 'center' }}>
         {cards.map((card, idx) =>
           <Card
             key={card.id}
@@ -66,7 +48,7 @@ export const Container: React.FC<Props> = ({tables, onTableClick}) => {
             text={card.text}
             draggable={true}
             hasReservation={card.hasReservation}
-            moveCard={moveCard}
+            moveCard={switchTable}
             onClick={onCardClick}
           />
         )}

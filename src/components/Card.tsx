@@ -2,11 +2,11 @@ import React, { useRef } from 'react'
 import { useDrag, useDrop, DropTargetMonitor, DragSourceMonitor } from 'react-dnd'
 
 const style = {
-  width: 50,
+  width: 60,
   border: '1px dashed gray',
   padding: '10px 0',
-  marginBottom: 8,
-  marginRight: 8,
+  marginBottom: 10,
+  marginRight: 10,
 }
 
 export interface CardProps {
