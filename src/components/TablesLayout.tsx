@@ -7,13 +7,14 @@ import { Container } from './Container'
 interface Props {
   tables: Table[]
   onTableClick: (table: any) => void
-  switchTable: (dragIndex: number, hoverIndex: number) => void
+  switchTable?: (dragIndex: number, hoverIndex: number) => void
+  draggable: boolean;
 }
 
-export const TablesLayout: React.FC<Props> = ({tables, onTableClick, switchTable}) => {
+export const TablesLayout: React.FC<Props> = ({tables, onTableClick, switchTable, draggable}) => {
   return (
     <DndProvider backend={HTML5Backend}>
-      <Container tables={tables} onTableClick={onTableClick} switchTable={switchTable} />
+      <Container tables={tables} onTableClick={onTableClick} switchTable={switchTable} draggable={draggable} />
     </DndProvider>
   )
 }

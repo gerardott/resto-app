@@ -15,7 +15,7 @@ export interface CardProps {
   draggable: boolean
   hasReservation?: boolean
   index: number
-  moveCard: (dragIndex: number, hoverIndex: number) => void
+  switchCard: (dragIndex: number, hoverIndex: number) => void
   onClick?: (index: number) => void
 }
 
@@ -25,7 +25,7 @@ interface DragItem {
   index: number
   hasReservation: boolean
 }
-export const Card: React.FC<CardProps> = ({ id, text, index, draggable, hasReservation, moveCard, onClick }) => {
+export const Card: React.FC<CardProps> = ({ id, text, index, draggable, hasReservation, switchCard: moveCard, onClick }) => {
   const ref = useRef<HTMLDivElement>(null);
   const hoverIndex = useRef<number>(0);
 

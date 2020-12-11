@@ -5,6 +5,7 @@ import './styles.css';
 import Tab1 from './Tab1';
 import LayoutEditorTab from './LayoutEditorTab';
 import UserDropdown from '../components/UserDropdown';
+import ReservationsTab from './ReservationsTab';
 
 interface Props {
 }
@@ -25,10 +26,11 @@ const Main: React.FC<Props> = () => {
             <Tabs.TabPane tab="Layout Editor" key="0">
               <LayoutEditorTab />
             </Tabs.TabPane>
-            <Tabs.TabPane tab="Tab 1" key="1">
-              <Tab1 />
+            <Tabs.TabPane tab="Reservation Managment" key="1">
+              <ReservationsTab />
             </Tabs.TabPane>
             <Tabs.TabPane tab="Tab 2" key="2">
+              <Tab1 />
             </Tabs.TabPane>
           </Tabs>
         </div>

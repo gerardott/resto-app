@@ -11,6 +11,7 @@ const LayoutEditorTab: React.FC<Props> = (props) => {
 
   const onTableClick = (position: any) => {
     setIsOpen(true);
+    form.resetFields();
     const table = tables.find(x => x.position === position);
     if (table) {
       form.setFieldsValue(table);
@@ -35,7 +36,6 @@ const LayoutEditorTab: React.FC<Props> = (props) => {
     setIsOpen(false);
     const newTable: Table = values;
     setTables([...tables, newTable]);
-    form.resetFields();
   }
   
   const onCancel = () => {
@@ -46,7 +46,7 @@ const LayoutEditorTab: React.FC<Props> = (props) => {
     <div className="tab-content">
       <h1>Table Layout Editor</h1>
       <p>Click on a cell to edit seats.</p>
-      <TablesLayout tables={tables} onTableClick={onTableClick} switchTable={switchTable} />
+      <TablesLayout tables={tables} onTableClick={onTableClick} switchTable={switchTable} draggable={true} />
       <Modal
         title="Edit Table"
         visible={isOpen}

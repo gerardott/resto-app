@@ -14,10 +14,11 @@ export interface Item {
 interface Props {
   tables: Table[]
   onTableClick: (table: any) => void
-  switchTable: (dragIndex: number, hoverIndex: number) => void
+  switchTable?: (dragIndex: number, hoverIndex: number) => void
+  draggable: boolean
 }
 
-export const Container: React.FC<Props> = ({tables, onTableClick, switchTable}) => {
+export const Container: React.FC<Props> = ({tables, onTableClick, switchTable, draggable}) => {
   const cards = Array(150).fill(null).map((_, idx) => {
     let item: any = { id: idx + 1 };
     const table = tables.find(x => x.position === idx);
@@ -37,6 +38,12 @@ export const Container: React.FC<Props> = ({tables, onTableClick, switchTable}) 
     onTableClick(idx);
   }
 
+  const switchCard = (dragIndex: number, hoverIndex: number) => {
+    if (draggable && switchTable) {
+      switchTable(dragIndex, hoverIndex);
+    }
+  }
+
   return (
     <div style={{ fontSize: 12 }}>
       <div style={{ width: width, display: 'flex', flexDirection: 'row', flexWrap: 'wrap', textAlign: 'center' }}>
@@ -46,9 +53,9 @@ export const Container: React.FC<Props> = ({tables, onTableClick, switchTable}) 
             index={idx}
             id={card.id}
             text={card.text}
-            draggable={true}
+            draggable={draggable}
             hasReservation={card.hasReservation}
-            moveCard={switchTable}
+            switchCard={switchCard}
             onClick={onCardClick}
           />
         )}
