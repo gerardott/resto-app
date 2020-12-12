@@ -2,12 +2,22 @@ import { Button, Form, Input, Modal } from 'antd';
 import React, { useState } from 'react';
 import { TablesLayout } from '../components/TablesLayout';
 import { Table } from '../models/Table';
+import { TableService } from '../services/TableService';
 
 interface Props {}
 const LayoutEditorTab: React.FC<Props> = (props) => {
   const [isOpen, setIsOpen] = useState(false);
   const [tables, setTables] = useState<Table[]>([]);
-  const [form] = Form.useForm();
+  const [form] = Form.useForm<Table>();
+
+  const loadData = async () => {
+    const response = await TableService.find();
+    setTables(response.data);
+  }
+  
+  React.useEffect(() => {
+    loadData();
+  }, [])
 
   const onTableClick = (position: any) => {
     setIsOpen(true);
@@ -17,25 +27,32 @@ const LayoutEditorTab: React.FC<Props> = (props) => {
       form.setFieldsValue(table);
     }
     else {
-      const draftTable = { id: tables.length + 1, position };
+      const draftTable = { num: tables.length + 1, position };
       form.setFieldsValue(draftTable);
     }
   }
   
   const switchTable = (dragIndex: number, hoverIndex: number) => {
-    const updated = tables.map(x => {
-      if (x.position === dragIndex) {
-        return {...x, position: hoverIndex};
+    const updated = tables.map(table => {
+      if (table.position === dragIndex) {
+        table.position = hoverIndex;
+        TableService.update(table.id, table);
+        return {...table, position: hoverIndex};
       }
-      return x;
+      return table;
     });
     setTables(updated);
   }
   
-  const onSave = (values: any) => {
+  const onSave = (values: Table) => {
     setIsOpen(false);
-    const newTable: Table = values;
-    setTables([...tables, newTable]);
+    if (values.id) {
+      TableService.update(values.id, values);
+    }
+    else {
+      TableService.create(values);
+    }
+    loadData();
   }
   
   const onCancel = () => {
@@ -59,7 +76,10 @@ const LayoutEditorTab: React.FC<Props> = (props) => {
           size="middle"
           onFinish={onSave}
         >
-          <Form.Item label="Table #" name="id">
+          <Form.Item hidden name="id">
+            <Input />
+          </Form.Item>
+          <Form.Item label="Table #" name="num">
             <Input disabled />
           </Form.Item>
           <Form.Item hidden name="position">
