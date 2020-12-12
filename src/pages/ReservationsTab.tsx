@@ -3,27 +3,38 @@ import React, { useState } from 'react';
 import ReservationsList from '../components/ReservationsList';
 import { TablesLayout } from '../components/TablesLayout';
 import { Table } from '../models/Table';
+import { TableService } from '../services/TableService';
 
-const initTables: Table[] = [
-  {id: 1, position: 2, seats: 2},
-  {id: 2, position: 10, seats: 4},
-  {id: 3, position: 50, seats: 8},
-]
+interface Props {
+}
 
-interface Props {}
 const ReservationsTab: React.FC<Props> = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const [tables] = useState<Table[]>(initTables);
+  const [tables, setTables] = useState<Table[]>([]);
+  const [selectedTable, setSelectedTable] = useState<Table>();
+
+  const loadData = async () => {
+    const response = await TableService.find();
+    setTables(response.data);
+  }
+  
+  React.useEffect(() => {
+    loadData();
+  }, [])
 
   const onTableClick = (position: any) => {
     const table = tables.find(x => x.position === position);
     if (table) {
+      setSelectedTable(table);
       setIsOpen(true);
     }
   }
   
   const onCancel = () => {
     setIsOpen(false)
+    setTimeout(() => {
+      setSelectedTable(undefined);
+    }, 500);
   }
   
   return (
@@ -31,18 +42,20 @@ const ReservationsTab: React.FC<Props> = () => {
       <h1>Reservation Management</h1>
       <p>Click on a cell to manage reservations.</p>
       <TablesLayout tables={tables} onTableClick={onTableClick} draggable={false} />
-      <Modal
-        title="Reservations"
-        visible={isOpen}
-        centered={true}
-        width={800}
-        onCancel={onCancel}
-        footer={[
-          <Button type="default" onClick={onCancel}>Close</Button>
-        ]}
-      >
-        <ReservationsList />
-      </Modal>
+      {selectedTable && 
+        <Modal
+          title={`Reservation of table #${selectedTable.num}`}
+          visible={isOpen}
+          centered={true}
+          width={800}
+          onCancel={onCancel}
+          footer={[
+            <Button type="default" onClick={onCancel}>Close</Button>
+          ]}
+        >
+          <ReservationsList table={selectedTable} />
+        </Modal>
+      }
     </div>
   )
 }

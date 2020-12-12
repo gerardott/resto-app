@@ -14,6 +14,7 @@
     "@types/react": "^16.9.53",
     "@types/react-dom": "^16.9.8",
     "antd": "^4.9.1",
+    "dayjs": "^1.9.7",
     "feathers-localstorage": "^5.2.0",
     "react": "^17.0.1",
     "react-dnd": "^11.1.3",
