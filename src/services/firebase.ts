@@ -39,6 +39,18 @@ export const createUserProfileDocument = async (userAuth: any, additionalData?: 
   return userRef;
 };
 
+export const updateUserProfile = async (userAuthUid: string, restaurantName: string) => {
+  if (!userAuthUid) return;
+  debugger;
+  const userRef = firestore.doc(`users/${userAuthUid}`);
+  const snapShot = await userRef.get();
+  if (snapShot.exists) {
+    userRef.update({restaurantName});
+  }
+
+  return userRef;
+};
+
 export const auth = firebase.auth();
 export const firestore = firebase.firestore();
 
