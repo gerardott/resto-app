@@ -11,8 +11,8 @@ const LayoutEditorTab: React.FC<Props> = (props) => {
   const [form] = Form.useForm<Table>();
 
   const loadData = async () => {
-    const response = await TableService.find();
-    setTables(response.data);
+    const list = await TableService.find();
+    setTables(list);
   }
   
   React.useEffect(() => {
@@ -46,6 +46,7 @@ const LayoutEditorTab: React.FC<Props> = (props) => {
   
   const onSave = (values: Table) => {
     setIsOpen(false);
+    values.seats = values.seats | 0;
     if (values.id) {
       TableService.update(values.id, values);
     }

@@ -14,8 +14,8 @@ const ReservationsTab: React.FC<Props> = () => {
   const [selectedTable, setSelectedTable] = useState<Table>();
 
   const loadData = async () => {
-    const response = await TableService.find();
-    setTables(response.data);
+    const list = await TableService.find();
+    setTables(list);
   }
   
   React.useEffect(() => {

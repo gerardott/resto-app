@@ -1,6 +1,6 @@
 export interface Reservation {
   id: number
-  tableId: number
+  tableId: string
   dateTime: Date
   customerName: string
   customerPhone: string
