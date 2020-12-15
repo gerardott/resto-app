@@ -1,5 +1,5 @@
 export interface Reservation {
-  id: number
+  id: string
   tableId: string
   dateTime: Date
   customerName: string

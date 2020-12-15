@@ -4,7 +4,8 @@ import React, { useState } from 'react';
 import { Reservation } from '../models/Reservation';
 import { Table } from '../models/Table';
 import ActionTable from './shared/ActionTable';
-import ModalForm, { useModalFormMock } from './shared/ModalForm';
+import ModalForm, { useModalForm } from './shared/ModalForm';
+import { ReservationService } from '../services/ReservationService';
 import dayjs from 'dayjs';
 
 interface Props {
@@ -14,21 +15,49 @@ interface Props {
 const ReservationsList: React.FC<Props> = ({ table }) => {
   const [form] = Form.useForm<Reservation>();
   const [list, setList] = useState<Reservation[]>([]);
-  const [modal] = useModalFormMock(form, list, setList);
-  const { onEdit, onDelete } = modal.handlers;
+  const [modal] = useModalForm(form);
+  const { onEdit } = modal.handlers;
   const { onCreateNew, onModalCancel } = modal.actions;
 
-  const onFinish = (values: Reservation) => {
-    if (!values.id) {
-      const exists = list.find(x => dayjs(x.dateTime).isSame(values.dateTime, 'minute'));
+  const loadData = async (tableId: string) => {
+    const list = await ReservationService.find(tableId);
+    setList(list);
+  }
+  
+  React.useEffect(() => {
+    loadData(table.id);
+  }, [table])
+
+  const isValid = (entity: Reservation) => {
+    if (!entity.id) {
+      const exists = list.find(x => dayjs(x.dateTime).isSame(entity.dateTime, 'minute'));
       if (exists) {
         message.warn('A reservation for that hour already exists');
-        return;
+        return false;
       }
     }
-    values.tableId = table.id;
-    modal.actions.onFinish(values);
+    return true;
   }
+
+  const onFinish = async (values: Reservation) => {
+    if (!isValid(values)) return;
+
+    values.tableId = table.id;
+    if (values.id) {
+      ReservationService.update(values.id, values);
+    }
+    else {
+      ReservationService.create(values);
+    }
+    await loadData(table.id);
+    modal.close();
+  }
+
+  const onDelete = async (record: Reservation) => {
+    ReservationService.remove(record.id);
+    await loadData(table.id)
+  }
+
   const requiredRule = [{required: true}];
   const renderDate = (value: Date) => value ? dayjs(value).format('MM/DD/YYYY HH:mm') : '';
 
