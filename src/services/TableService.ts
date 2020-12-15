@@ -2,8 +2,8 @@ import { firestore } from './firebase';
 import { Table } from '../models/Table';
 
 export class TableService {
-  static find = async () => {
-    const collRef = firestore.collection('/tables')
+  static find = async (restaurantId: string) => {
+    const collRef = firestore.collection('/tables').where('restaurantId', '==', restaurantId);
     const querySnapshot = await collRef.get();
     let list = [];
     querySnapshot.forEach(doc => {

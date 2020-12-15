@@ -39,16 +39,26 @@ export const createUserProfileDocument = async (userAuth: any, additionalData?: 
   return userRef;
 };
 
-export const updateUserProfile = async (userAuthUid: string, restaurantName: string) => {
-  if (!userAuthUid) return;
-  debugger;
-  const userRef = firestore.doc(`users/${userAuthUid}`);
-  const snapShot = await userRef.get();
-  if (snapShot.exists) {
-    userRef.update({restaurantName});
-  }
+export const setRestaurant = async (userId: string, name: string) => {
+  const queryRef = firestore.collection('restaurants').where('userId', '==', userId);
+  const snapshot = await queryRef.get();
 
-  return userRef;
+  if (!snapshot.empty) {
+    snapshot.docs[0].ref.update({name});
+  }
+};
+
+export const createRestaurant = async (userId: string) => {
+  const queryRef = firestore.collection('restaurants').where('userId', '==', userId);
+  const snapshot = await queryRef.get();
+
+  if (snapshot.empty) {
+    const restoDocRef = firestore.collection('restaurants').doc();
+    await restoDocRef.set({ userId });
+    return restoDocRef;
+  } else {
+    return snapshot.docs[0].ref;
+  }
 };
 
 export const auth = firebase.auth();

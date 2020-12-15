@@ -1,23 +1,26 @@
 import { Button, Form, Input, Modal } from 'antd';
-import React, { useState } from 'react';
+import React, { useContext, useState } from 'react';
 import { TablesLayout } from '../components/TablesLayout';
+import { Restaurant } from '../models/Restaurant';
 import { Table } from '../models/Table';
+import { RestaurantContext } from '../services/Contexts';
 import { TableService } from '../services/TableService';
 
 interface Props {}
-const LayoutEditorTab: React.FC<Props> = (props) => {
+const LayoutEditorTab: React.FC<Props> = () => {
+  const restaurant = useContext<Restaurant>(RestaurantContext);
   const [isOpen, setIsOpen] = useState(false);
   const [tables, setTables] = useState<Table[]>([]);
   const [form] = Form.useForm<Table>();
 
-  const loadData = async () => {
-    const list = await TableService.find();
+  const loadData = async (restaurantId: string) => {
+    const list = await TableService.find(restaurantId);
     setTables(list);
   }
   
   React.useEffect(() => {
-    loadData();
-  }, [])
+    loadData(restaurant.id);
+  }, [restaurant])
 
   const onTableClick = (position: any) => {
     setIsOpen(true);
@@ -44,16 +47,17 @@ const LayoutEditorTab: React.FC<Props> = (props) => {
     setTables(updated);
   }
   
-  const onSave = (values: Table) => {
+  const onSave = async (values: Table) => {
     setIsOpen(false);
     values.seats = values.seats | 0;
+    values.restaurantId = restaurant.id;
     if (values.id) {
       TableService.update(values.id, values);
     }
     else {
       TableService.create(values);
     }
-    loadData();
+    await loadData(restaurant.id);
   }
   
   const onCancel = () => {

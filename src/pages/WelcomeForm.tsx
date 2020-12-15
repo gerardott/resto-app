@@ -1,17 +1,18 @@
+import React, { useContext } from 'react';
 import { Button, Form, Input } from 'antd';
-import React from 'react';
 import { User } from '../models/User';
-import { updateUserProfile } from '../services/firebase';
+import { CurrentUserContext } from '../services/Contexts';
+import { setRestaurant } from '../services/firebase';
 
 interface Props {
-  currentUser: User
 }
 const WelcomeForm: React.FC<Props> = (props) => {
+  const currentUser = useContext<User>(CurrentUserContext);
   const [form] = Form.useForm();
 
   const handleSubmit = (values: any) => {
     console.log(values);
-    updateUserProfile(props.currentUser.uid, values.restaurantName);
+    setRestaurant(currentUser.uid, values.restaurantName);
   }
 
   return (
