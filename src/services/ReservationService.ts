@@ -3,9 +3,16 @@ import { Reservation } from '../models/Reservation';
 import dayjs from 'dayjs';
 
 export class ReservationService {
-  static find = async (tableId: string) => {
-    const collRef = firestore.collection('/reservations').where('tableId', '==', tableId);
-    const querySnapshot = await collRef.get();
+  static find = async (tableId: string, fromFuture: boolean) => {
+    let queryRef = firestore.collection('/reservations').where('tableId', '==', tableId);
+    const today = dayjs().startOf('day').toDate();
+    if (fromFuture) {
+      queryRef = queryRef.where('dateTime', '>=', today).orderBy('dateTime', 'asc');
+    } else {
+      const lastMonth = dayjs().subtract(1, 'month').toDate();
+      queryRef = queryRef.where('dateTime', '>=', lastMonth).where('dateTime', '<=', today).orderBy('dateTime', 'desc');
+    }
+    const querySnapshot = await queryRef.get();
     let list = [];
     querySnapshot.forEach(doc => {
       const reservation: any = {...doc.data(), id: doc.id};

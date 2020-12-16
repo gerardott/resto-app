@@ -1,4 +1,4 @@
-import { DatePicker, Form, Input, message } from 'antd';
+import { Col, DatePicker, Form, Input, message, Row, Switch } from 'antd';
 import Column from 'antd/lib/table/Column';
 import React, { useState } from 'react';
 import { Reservation } from '../models/Reservation';
@@ -15,18 +15,19 @@ interface Props {
 const ReservationsList: React.FC<Props> = ({ table }) => {
   const [form] = Form.useForm<Reservation>();
   const [list, setList] = useState<Reservation[]>([]);
+  const [showFuture, setShowFuture] = useState<boolean>(true);
   const [modal] = useModalForm(form);
   const { onEdit } = modal.handlers;
   const { onCreateNew, onModalCancel } = modal.actions;
 
-  const loadData = async (tableId: string) => {
-    const list = await ReservationService.find(tableId);
+  const loadData = async (tableId: string, future: boolean) => {
+    const list = await ReservationService.find(tableId, future);
     setList(list);
   }
   
   React.useEffect(() => {
-    loadData(table.id);
-  }, [table])
+    loadData(table.id, showFuture);
+  }, [table, showFuture])
 
   const isValid = (entity: Reservation) => {
     if (!entity.id) {
@@ -49,13 +50,13 @@ const ReservationsList: React.FC<Props> = ({ table }) => {
     else {
       ReservationService.create(values);
     }
-    await loadData(table.id);
+    await loadData(table.id, showFuture);
     modal.close();
   }
 
   const onDelete = async (record: Reservation) => {
     ReservationService.remove(record.id);
-    await loadData(table.id)
+    await loadData(table.id, showFuture);
   }
 
   const requiredRule = [{required: true}];
@@ -63,7 +64,14 @@ const ReservationsList: React.FC<Props> = ({ table }) => {
 
   return (
     <>
-      <h1>Reservations</h1>
+      <Row gutter={8}>
+        <Col>
+          <span>Show reservations from:</span>
+        </Col>
+        <Col>
+          <Switch checkedChildren="future" unCheckedChildren="past" checked={showFuture} onChange={(val) => setShowFuture(val)}/>
+        </Col>
+      </Row>
       <ModalForm form={form}
         modal={modal}
         entityName="Reservation"
