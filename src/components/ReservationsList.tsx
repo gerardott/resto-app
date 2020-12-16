@@ -1,4 +1,4 @@
-import { Col, DatePicker, Form, Input, message, Row, Switch } from 'antd';
+import { Col, Form, Input, message, Row, Switch } from 'antd';
 import Column from 'antd/lib/table/Column';
 import React, { useState } from 'react';
 import { Reservation } from '../models/Reservation';
@@ -7,6 +7,7 @@ import ActionTable from './shared/ActionTable';
 import ModalForm, { useModalForm } from './shared/ModalForm';
 import { ReservationService } from '../services/ReservationService';
 import dayjs from 'dayjs';
+import { DatePicker } from './shared/dates';
 
 interface Props {
   table: Table
@@ -63,13 +64,13 @@ const ReservationsList: React.FC<Props> = ({ table }) => {
   const renderDate = (value: Date) => value ? dayjs(value).format('MM/DD/YYYY HH:mm') : '';
 
   return (
-    <>
+    <div style={{minHeight: 320}}>
       <Row gutter={8}>
         <Col>
-          <span>Show reservations from:</span>
+          <span>Show reservations from future:</span>
         </Col>
         <Col>
-          <Switch checkedChildren="future" unCheckedChildren="past" checked={showFuture} onChange={(val) => setShowFuture(val)}/>
+          <Switch checked={showFuture} onChange={(val) => setShowFuture(val)}/>
         </Col>
       </Row>
       <ModalForm form={form}
@@ -102,7 +103,7 @@ const ReservationsList: React.FC<Props> = ({ table }) => {
         <Column title="Customer Phone" dataIndex="customerPhone" />
         <Column title="Customer Email" dataIndex="customerEmail" />
       </ActionTable>
-    </>
+    </div>
   )
 }
 
