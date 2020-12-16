@@ -2,7 +2,6 @@ import React, { useContext } from 'react';
 import { Tabs, Row } from 'antd';
 import Layout, { Header, Content, Footer } from 'antd/lib/layout/layout';
 import './styles.css';
-import Tab1 from './Tab1';
 import LayoutEditorTab from './LayoutEditorTab';
 import UserDropdown from '../components/UserDropdown';
 import ReservationsTab from './ReservationsTab';
@@ -10,6 +9,7 @@ import WelcomeForm from './WelcomeForm';
 import { User } from '../models/User';
 import { CurrentUserContext, RestaurantContext } from '../services/Contexts';
 import { Restaurant } from '../models/Restaurant';
+import ReportTab from './report/ReportTab';
 
 interface Props {
 }
@@ -37,8 +37,8 @@ const Main: React.FC<Props> = () => {
               <Tabs.TabPane tab="Reservation Managment" key="1">
                 <ReservationsTab />
               </Tabs.TabPane>
-              <Tabs.TabPane tab="Tab 2" key="2">
-                <Tab1 />
+              <Tabs.TabPane tab="Reporting" key="2">
+                <ReportTab />
               </Tabs.TabPane>
             </Tabs>
           ) : (

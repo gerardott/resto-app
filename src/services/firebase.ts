@@ -1,6 +1,8 @@
 import firebase from 'firebase/app';
 import 'firebase/firestore';
 import 'firebase/auth';
+import dayjs from 'dayjs';
+import { ReportItem } from '../models/ReportItem';
 
 const firebaseConfig = {
   apiKey: "AIzaSyBVxBjEnjh0lzl0nrnkYn9kWmeQt0g6SmI",
@@ -60,6 +62,43 @@ export const createRestaurant = async (userId: string) => {
     return snapshot.docs[0].ref;
   }
 };
+
+export const getReportData = async (restaurantId: string, startDate: Date, endDate: Date) => {
+  const tables = await getTables(restaurantId);
+  const tableIds = Array.from(tables.keys());
+  const queryRef = firestore.collection('reservations')
+    .where('tableId', 'in', tableIds)
+    .where('dateTime', '>=', startDate)
+    .where('dateTime', '<=', endDate)
+    .orderBy('dateTime');
+  const snapshot = await queryRef.get();
+  let list: ReportItem[] = [];
+  snapshot.forEach(doc => {
+    const reservation = doc.data();
+    const reservationTime = dayjs(reservation.dateTime.toDate()).format('HH:mm');
+    const item: ReportItem = {
+      key: doc.id,
+      tableNum: tables.get(reservation.tableId).num,
+      reservationTime,
+      customerName: reservation.customerName,
+      customerPhone: reservation.customerPhone,
+      customerEmail: reservation.customerEmail,
+    };
+    list.push(item);
+    list = list.sort((a, b) => a.tableNum - b.tableNum);
+  })
+  return list;
+};
+
+const getTables = async (restaurantId: string) => {
+  const queryRef = firestore.collection('tables').where('restaurantId', '==', restaurantId);
+  const snapshot = await queryRef.get();
+  let map = new Map();
+  snapshot.forEach(doc => {
+    map.set(doc.id, doc.data());
+  })
+  return map;
+}
 
 export const auth = firebase.auth();
 export const firestore = firebase.firestore();
