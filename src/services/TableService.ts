@@ -33,6 +33,12 @@ export class TableService {
     }
   }
 
-  static remove = async (table: Table) => {
+  static remove = async (id: string) => {
+    try {
+      await firestore.collection('/tables').doc(id).delete();
+      console.log('Remove successful:', id);
+    } catch (error) {
+      console.error('Error removing', error);
+    }
   }
 }

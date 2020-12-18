@@ -1,6 +1,7 @@
-import { Button, Form, Input, Row } from 'antd';
 import React, { useContext, useState } from 'react';
+import { Button, Form, Input } from 'antd';
 import ModalForm, { useModalForm } from '../components/shared/ModalForm';
+import { DeleteTwoTone } from '@ant-design/icons';
 import { TablesLayout } from '../components/TablesLayout';
 import { Restaurant } from '../models/Restaurant';
 import { Table } from '../models/Table';
@@ -57,6 +58,13 @@ const LayoutEditorTab: React.FC<Props> = () => {
     }
     await loadData(restaurant.id);
   }
+
+  const onDelete = async () => {
+    modal.close();
+    const tableId = form.getFieldValue('id');
+    await TableService.remove(tableId);
+    await loadData(restaurant.id);
+  }
   
   return (
     <div className="tab-content">
@@ -72,17 +80,28 @@ const LayoutEditorTab: React.FC<Props> = () => {
           <Form.Item hidden name="id">
             <Input />
           </Form.Item>
-          <Form.Item label="Table #" name="num">
-            <Input disabled />
-          </Form.Item>
+          {modal.mode === 'create' ? (
+            <Form.Item label="Table #" name="num">
+              <Input disabled />
+            </Form.Item>
+          ) : (
+            <Form.Item label="Table #" style={{marginBottom: 0}}>
+              <Form.Item name="num" style={{ display: 'inline-block', width: 'calc(90% - 8px)' }}>
+                <Input disabled />
+              </Form.Item>
+              <Form.Item style={{ display: 'inline-block', width: 'calc(10% - 8px)', margin: '0 8px' }}>
+                <Button type="link" size="small" title="Delete" onClick={onDelete}>
+                  <DeleteTwoTone style={{fontSize: '18px'}} />
+                </Button>
+              </Form.Item>
+            </Form.Item>
+          )}
           <Form.Item hidden name="position">
             <Input />
           </Form.Item>
           <Form.Item label="Seats" name="seats" rules={[{required: true}]}>
             <Input type="number" />
           </Form.Item>
-          <Row>
-          </Row>
       </ModalForm>
     </div>
   )
