@@ -1,5 +1,6 @@
-import { Button, Form, Input, Modal } from 'antd';
+import { Button, Form, Input, Row } from 'antd';
 import React, { useContext, useState } from 'react';
+import ModalForm, { useModalForm } from '../components/shared/ModalForm';
 import { TablesLayout } from '../components/TablesLayout';
 import { Restaurant } from '../models/Restaurant';
 import { Table } from '../models/Table';
@@ -9,10 +10,11 @@ import { TableService } from '../services/TableService';
 interface Props {}
 const LayoutEditorTab: React.FC<Props> = () => {
   const restaurant = useContext<Restaurant>(RestaurantContext);
-  const [isOpen, setIsOpen] = useState(false);
   const [tables, setTables] = useState<Table[]>([]);
   const [form] = Form.useForm<Table>();
-
+  const [modal] = useModalForm(form);
+  const { onModalCancel } = modal.actions;
+  
   const loadData = async (restaurantId: string) => {
     const list = await TableService.find(restaurantId);
     setTables(list);
@@ -23,14 +25,13 @@ const LayoutEditorTab: React.FC<Props> = () => {
   }, [restaurant])
 
   const onTableClick = (position: any) => {
-    setIsOpen(true);
-    form.resetFields();
     const table = tables.find(x => x.position === position);
     if (table) {
-      form.setFieldsValue(table);
+      modal.handlers.onEdit(table);
     }
     else {
       const draftTable = { num: tables.length + 1, position };
+      modal.actions.onCreateNew();
       form.setFieldsValue(draftTable);
     }
   }
@@ -45,7 +46,7 @@ const LayoutEditorTab: React.FC<Props> = () => {
   }
   
   const onSave = async (values: Table) => {
-    setIsOpen(false);
+    modal.close();
     values.seats = values.seats | 0;
     values.restaurantId = restaurant.id;
     if (values.id) {
@@ -57,27 +58,17 @@ const LayoutEditorTab: React.FC<Props> = () => {
     await loadData(restaurant.id);
   }
   
-  const onCancel = () => {
-    setIsOpen(false)
-  }
-  
   return (
     <div className="tab-content">
       <h1>Table Layout Editor</h1>
       <p>Click on a cell to edit seats.</p>
       <TablesLayout tables={tables} onTableClick={onTableClick} switchTable={switchTable} draggable={true} />
-      <Modal
-        title="Edit Table"
-        visible={isOpen}
-        centered={true}
-        onCancel={onCancel}
-        footer={[]}
+      <ModalForm form={form}
+        modal={modal}
+        entityName="Table"
+        onFinish={onSave}
+        onCancel={onModalCancel}
       >
-        <Form form={form}
-          layout="horizontal"
-          size="middle"
-          onFinish={onSave}
-        >
           <Form.Item hidden name="id">
             <Input />
           </Form.Item>
@@ -87,12 +78,12 @@ const LayoutEditorTab: React.FC<Props> = () => {
           <Form.Item hidden name="position">
             <Input />
           </Form.Item>
-          <Form.Item label="Seats" name="seats">
+          <Form.Item label="Seats" name="seats" rules={[{required: true}]}>
             <Input type="number" />
           </Form.Item>
-          <Button type="primary" htmlType="submit" >Save</Button>
-        </Form>
-      </Modal>
+          <Row>
+          </Row>
+      </ModalForm>
     </div>
   )
 }
