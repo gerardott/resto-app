@@ -35,16 +35,13 @@ const LayoutEditorTab: React.FC<Props> = () => {
     }
   }
   
-  const switchTable = (dragIndex: number, hoverIndex: number) => {
-    const updated = tables.map(table => {
-      if (table.position === dragIndex) {
-        table.position = hoverIndex;
-        TableService.update(table.id, table);
-        return {...table, position: hoverIndex};
-      }
-      return table;
-    });
-    setTables(updated);
+  const switchTable = async (dragIndex: number, hoverIndex: number) => {
+    const draggedTable = tables.find(x => x.position === dragIndex);
+    if (draggedTable) {
+      draggedTable.position = hoverIndex;
+      await TableService.update(draggedTable.id, draggedTable);
+      await loadData(restaurant.id);
+    }
   }
   
   const onSave = async (values: Table) => {
@@ -52,10 +49,10 @@ const LayoutEditorTab: React.FC<Props> = () => {
     values.seats = values.seats | 0;
     values.restaurantId = restaurant.id;
     if (values.id) {
-      TableService.update(values.id, values);
+      await TableService.update(values.id, values);
     }
     else {
-      TableService.create(values);
+      await TableService.create(values);
     }
     await loadData(restaurant.id);
   }
