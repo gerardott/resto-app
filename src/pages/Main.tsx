@@ -21,9 +21,11 @@ const Main: React.FC<Props> = () => {
 
   return (
     <Layout className="layout">
-      <Header>
+      <Header className="header">
         <Row justify="space-between" align="middle" style={{ height: '100%' }}>
-          <div className="logo" />
+          <div className="logo">
+            <h1>{restaurant?.name}</h1>
+          </div>
           <UserDropdown displayName={currentUser?.displayName} />
         </Row>
       </Header>
