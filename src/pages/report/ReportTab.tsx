@@ -23,11 +23,11 @@ const ReportTab: React.FC = () => {
     <div className="tab-content">
       <h1>Reservation Management</h1>
       <p>Select a date to view all reservations</p>
-      <p>
+      <div style={{marginBottom: 16}}>
         <span>Select date: </span>
         <DatePicker onChange={onPickerChange} format="MM/DD/YYYY" />
-      </p>
-      <BasicTable dataSource={list} size="small" bordered>
+      </div>
+      <BasicTable key="key" dataSource={list} size="small" bordered>
         <Column title="Table" dataIndex="tableNum" />
         <Column title="Reservation Time" dataIndex="reservationTime" />
         <Column title="Customer Name" dataIndex="customerName" />

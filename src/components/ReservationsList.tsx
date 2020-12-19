@@ -32,6 +32,7 @@ const ReservationsList: React.FC<Props> = ({ table }) => {
 
   const isValid = (entity: Reservation) => {
     if (!entity.id) {
+      entity.dateTime = dayjs(entity.dateTime).startOf('hour');
       const exists = list.find(x => dayjs(x.dateTime).isSame(entity.dateTime, 'minute'));
       if (exists) {
         message.warn('A reservation for that hour already exists');
